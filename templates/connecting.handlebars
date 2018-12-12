@@ -88,6 +88,10 @@
         font-size: 1.4rem;
         margin: 4rem;
       }
+
+      #ssid {
+        font-family: monospace;
+      }
     </style>
     <title>Connecting</title>
   </head>
@@ -95,7 +99,7 @@
     <div id="maindiv">
       <h1 id="title">Connecting...</h1>
       <h3 id="content">
-        Your radio is now connecting to your WiFi network. <br><br>
+        Your radio is now connecting to the WiFi network <span class="ssid">{{ssid}}</span>. <br><br>
         Please ensure you are connected to that network and navigate
         to <a class="gateway-link" href="http://my.adblockradio.com" rel="noopener">my.adblockradio.com</a>
         in your web browser to continue setup.
@@ -104,14 +108,5 @@
         Note that it may take some time to become active.
       </div>
     </div>
-    <script>
-      if ({{skip}}) {
-        document.getElementById('title').innerText = 'WiFi setup skipped';
-        document.getElementById('content').innerHTML =
-          'The gateway is now being started. Navigate to ' +
-          '<a class="gateway-link" href="http://my.adblockradio.com" rel="noopener">my.adblockradio.com</a> ' +
-          'in your web browser while connected to same network as the radio to continue setup.';
-      }
-    </script>
   </body>
 </html>

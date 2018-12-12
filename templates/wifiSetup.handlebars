@@ -68,6 +68,7 @@
 
       body {
         background-image: linear-gradient(135deg, #4481eb 0%, #04befe 100%);
+        background-attachment: fixed;
         height: 100vh;
         color: #fff;
         width: auto
@@ -84,6 +85,10 @@
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
+      }
+
+      #mainform {
+        margin-bottom: 2em;
       }
 
       #step2 {
@@ -115,10 +120,6 @@
         color: #fff;
         text-align: center;
         text-decoration: none;
-      }
-
-      .item.skip {
-        width: 10rem;
       }
 
       .item.connect {
@@ -259,12 +260,6 @@
         document.getElementById('wordmark').style.display = 'block';
       }
 
-      function skip(event) {
-        event.preventDefault();
-        document.getElementById('skip').value = '1';
-        document.getElementById('mainform').submit();
-      }
-
       let mask = true;
       function displaypassword() {
         let tbx = document.getElementsByName('password')[0];
@@ -283,14 +278,13 @@
     <form action="/connecting" method="post" id="mainform">
       <div id="step1">
         <div id="maindiv">
-          <h1>Welcome</h1>
-          <h3>Connect to a WiFi network?</h3><br>
+          <h1>My Adblock Radio</h1>
+          <h3>Connect to a WiFi network</h3><br>
           {{#networks}}
             <button onclick="window.selectssid(event, '{{{escapeQuotes ssid}}}', {{pwdRequired}})" id="item"
                     class="item ssid"><div class="text-ssid">{{ssid}}</div> <img src='/{{icon}}'>
             </button>
           {{/networks}}<br><br>
-          <button onclick="window.skip(event)" class="item skip">Skip</button>
         </div>
       </div>
       <div id="step2">
@@ -309,7 +303,6 @@
         </div>
       </div>
       <input id="ssid" name="ssid" type="hidden" value="">
-      <input id="skip" name="skip" type="hidden" value="">
       <img id="wordmark" alt="Adblock Radio" src="/abr_transparent_head.png" />
     </form>
   </body>

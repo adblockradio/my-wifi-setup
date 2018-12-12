@@ -4,7 +4,6 @@ const Express = require('express');
 const Handlebars = require('handlebars');
 const bodyParser = require('body-parser');
 const fs = require('fs');
-const os = require('os');
 const run = require('./run.js');
 const platform = require('./platform.js');
 const wifi = require('./wifi.js');
@@ -15,14 +14,6 @@ Handlebars.registerHelper('escapeQuotes', function(str) {
   return new Handlebars.SafeString(str.replace(/'/, '\\\''));
 });
 
-// if the user decided to skip the wifi setup, we directly start the monitor
-// and exit
-if (fs.existsSync('wifiskip')) {
-  startMonitor();
-  stopWifiService();
-  return;
-}
-
 // check if the device has a wifi adapter.
 // if it doesn't, then this stops itself
 // and start the monitor
@@ -32,7 +23,7 @@ wifi.getStatus()
     // to 10 times. If we are connected, then start the monitor client.
     // If we never get a wifi connection, go into AP mode.
     // Before we start, though, let the user know that something is happening
-    wifi.waitForWiFi(20, 3000)
+    wifi.waitForWiFi(10, 3000)
       .then(() => {
         startMonitor();
         stopWifiService();
@@ -185,18 +176,6 @@ function handleWiFiSetup(request, response) {
 }
 
 function handleConnecting(request, response) {
-  if (request.body.skip === '1') {
-    fs.closeSync(fs.openSync('wifiskip', 'w'));
-    console.log('skip wifi setup. stop the ap');
-    response.send(connectingTemplate({skip: 'true'}));
-    wifi.stopAP()
-      .then(() => {
-        console.log('skip wifi setup. start the monitor');
-        startMonitor();
-        stopWifiService();
-      });
-    return;
-  }
 
   const ssid = request.body.ssid.trim();
   const password = request.body.password.trim();
@@ -209,7 +188,7 @@ function handleConnecting(request, response) {
   // Also, if we're not in AP mode, then we should just redirect to
   // /status instead of sending the connecting template.
   //
-  response.send(connectingTemplate({skip: 'false'}));
+  response.send(connectingTemplate({ ssid: ssid }));
 
   // Wait before switching networks to make sure the response gets through.
   // And also wait to be sure that the access point is fully down before
