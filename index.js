@@ -83,7 +83,7 @@ function startServer() {
   // And start listening for connections
   // XXX: note that we are HTTP only... is this a security issue?
   // XXX: for first-time this is on an open access point.
-  server.listen(8080);
+  server.listen(80);
   console.log('HTTP server listening');
 }
 

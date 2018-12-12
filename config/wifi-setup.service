@@ -10,7 +10,7 @@ StandardError=journal
 # Edit this line, if needed, to specify where you installed the server
 WorkingDirectory=/root/my-wifi-setup
 # Edit this line, if needed, to set the correct path to node
-ExecStart=/root/gateway-wifi-setup/run.sh
+ExecStart=/root/my-wifi-setup/run.sh
 
 [Install]
 WantedBy=multi-user.target
