@@ -5,10 +5,9 @@ module.exports = {
 
   // ip to be used by the AP
   ap_ip: '192.168.220.1',
-  startGateway: 'systemctl start mozilla-iot-gateway',
-  stopGateway: 'systemctl stop mozilla-iot-gateway',
-  restartGateway: 'systemctl restart mozilla-iot-gateway',
-  stopWifiService: 'systemctl stop mozilla-gateway-wifi-setup',
+  startMonitor: 'systemctl start buffer.service && systemctl start client.service',
+  stopMonitor: 'systemctl stop client.service && systemctl stop buffer.service',
+  stopWifiService: 'systemctl stop wifi-setup',
 
   // A shell command that outputs the string "COMPLETED" if we are
   // connected to a wifi network and outputs something else otherwise
@@ -62,9 +61,4 @@ module.exports = {
 
   // Lists configured networks
   listNetworks: 'wpa_cli -iwlan0 list_networks',
-
-  // Broadcast an Eddystone beacon
-  broadcastBeacon:
-    // eslint-disable-next-line
-    'hciconfig hci0 up && hciconfig hci0 leadv 3 && hcitool -i hci0 cmd',
 };

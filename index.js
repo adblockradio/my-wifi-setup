@@ -15,30 +15,26 @@ Handlebars.registerHelper('escapeQuotes', function(str) {
   return new Handlebars.SafeString(str.replace(/'/, '\\\''));
 });
 
-// if the user decided to skip the wifi setup, we directly start the gateway
+// if the user decided to skip the wifi setup, we directly start the monitor
 // and exit
 if (fs.existsSync('wifiskip')) {
-  console.log('start the gateway');
-  startGateway();
-  console.log('stop wifi setup');
+  startMonitor();
   stopWifiService();
   return;
 }
 
 // check if the device has a wifi adapter.
 // if it doesn't, then this stops itself
-// and start the gateway
+// and start the monitor
 wifi.getStatus()
   .then(() => {
     // Wait until we have a working wifi connection. Retry every 3 seconds up
-    // to 10 times. If we are connected, then start the Gateway client.
+    // to 10 times. If we are connected, then start the monitor client.
     // If we never get a wifi connection, go into AP mode.
     // Before we start, though, let the user know that something is happening
     wifi.waitForWiFi(20, 3000)
       .then(() => {
-        console.log('start the gateway');
-        startGateway();
-        console.log('stop wifi setup');
+        startMonitor();
         stopWifiService();
       })
       .catch((err) => {
@@ -47,11 +43,9 @@ wifi.getStatus()
       });
   })
   .catch(() => {
-    console.error('Error checking wifi adapter presence. Start the gateway ' +
+    console.error('Error checking wifi adapter presence. Start the monitor ' +
                   'and then shutdown the wifi service..');
-    console.log('start the gateway');
-    startGateway();
-    console.log('stop wifi setup');
+    startMonitor();
     stopWifiService();
   });
 
@@ -196,11 +190,9 @@ function handleConnecting(request, response) {
     console.log('skip wifi setup. stop the ap');
     response.send(connectingTemplate({skip: 'true'}));
     wifi.stopAP()
-      .then(() => wifi.broadcastBeacon())
       .then(() => {
-        console.log('skip wifi setup. start the gateway');
-        startGateway();
-        console.log('stop wifi setup');
+        console.log('skip wifi setup. start the monitor');
+        startMonitor();
         stopWifiService();
       });
     return;
@@ -241,11 +233,8 @@ function handleConnecting(request, response) {
     })
     .then(() => wifi.defineNetwork(ssid, password))
     .then(() => wifi.waitForWiFi(20, 3000))
-    .then(() => wifi.broadcastBeacon())
     .then(() => {
-      console.log('start the gateway');
-      startGateway();
-      console.log('stop wifi setup');
+      startMonitor();
       stopWifiService();
     })
     .catch((error) => {
@@ -253,14 +242,23 @@ function handleConnecting(request, response) {
     });
 }
 
-function startGateway() {
-  return run(platform.startGateway)
-    .then((out) => console.log('Gateway started', out))
-    .catch((err) => console.error('Error starting Gateway:', err));
+function startMonitor() {
+  console.log('start radio monitoring');
+  return run(platform.startMonitor)
+    .then((out) => console.log('Monitor started', out))
+    .catch((err) => console.error('Error starting monitor:', err));
+}
+
+function stopMonitor() {
+  console.log('stop radio monitoring');
+  return run(platform.stopMonitor)
+    .then((out) => console.log('Monitor stopped', out))
+    .catch((err) => console.error('Error stopping monitor:', err));
 }
 
 function stopWifiService() {
+  console.log('stop My Wifi Setup');
   return run(platform.stopWifiService)
-    .then((out) => console.log('VWifi service stopped', out))
-    .catch((err) => console.error('Error stopping wifi service:', err));
+    .then((out) => console.log('My Wifi Setup service stopped', out))
+    .catch((err) => console.error('Error stopping My Wifi Setup service:', err));
 }
