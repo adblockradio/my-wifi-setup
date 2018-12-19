@@ -5,8 +5,8 @@ module.exports = {
 
   // ip to be used by the AP
   ap_ip: '192.168.220.1',
-  startMonitor: 'systemctl start buffer.service && systemctl start client.service',
-  stopMonitor: 'systemctl stop client.service && systemctl stop buffer.service',
+  startMonitor: 'systemctl start buffer.service',
+  stopMonitor: 'systemctl stop buffer.service',
   stopWifiService: 'systemctl stop wifi-setup',
 
   // A shell command that outputs the string "COMPLETED" if we are
